@@ -11,6 +11,7 @@ class Program
         // 1. GLOBAL ERROR HANDLING
         try
         {
+            Console.OutputEncoding = System.Text.Encoding.UTF8; 
             RunApp();
         }
         catch (Exception ex)
