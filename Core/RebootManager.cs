@@ -6,13 +6,13 @@ namespace QuickBootWindows.Core
     {
         public void RebootNow()
         {
-            // /r = reboot
-            // /t 0 = time delay 0 seconds (immediate)
-            // /f = force close running applications (optional, but recommended)
             ProcessStartInfo psi = new ProcessStartInfo
             {
                 FileName = "shutdown",
-                Arguments = "/r /t 0",
+                // /r = reboot
+                // /f = force close apps (prevents getting stuck)
+                // /t 0 = immediate
+                Arguments = "/r /f /t 0", 
                 CreateNoWindow = true,
                 UseShellExecute = false
             };

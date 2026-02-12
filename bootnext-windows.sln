@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "bootnext-windows", "bootnext-windows.csproj", "{188A7260-80B3-D146-CB26-8959ABFC8E8E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{188A7260-80B3-D146-CB26-8959ABFC8E8E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{188A7260-80B3-D146-CB26-8959ABFC8E8E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{188A7260-80B3-D146-CB26-8959ABFC8E8E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{188A7260-80B3-D146-CB26-8959ABFC8E8E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D17EE01-E0E4-486F-B761-4A3B285BEA44}
+	EndGlobalSection
+EndGlobal
