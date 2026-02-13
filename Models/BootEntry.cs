@@ -1,5 +1,5 @@
 namespace QuickBootWindows.Models
 {
-    // A simple container for our data
-    public record BootEntry(string Guid, string Description);
+    // Added 'Path' to the record
+    public record BootEntry(string Guid, string Description, string Path);
 }

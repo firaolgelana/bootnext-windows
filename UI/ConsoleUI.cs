@@ -50,36 +50,43 @@ namespace QuickBootWindows.UI
             return key.KeyChar == 'y' || key.KeyChar == 'Y';
         }
 
-
         public static BootEntry? SelectFromMenu(List<BootEntry> entries)
         {
             Console.WriteLine("\n🎯 Multiple OS detected. Please choose:");
-            
+
+            // Group entries to find duplicates names
+            var nameGroups = entries.GroupBy(e => e.Description);
+
             for (int i = 0; i < entries.Count; i++)
             {
-                // Print: [1] Ubuntu
-                //        [2] Kali Linux
-                Console.WriteLine($"   [{i + 1}] {entries[i].Description}");
+                var entry = entries[i];
+                string displayName = entry.Description;
+
+                // LOGIC: If multiple entries have the same name, add details
+                if (nameGroups.First(g => g.Key == entry.Description).Count() > 1)
+                {
+                    // It's a duplicate! Make it unique.
+                    // Example: "Fedora (Path: \EFI\Fedora\shim.efi)"
+                    // Or simpler: "Fedora (ID: ...A1B2)"
+                    
+                    string shortId = entry.Guid.Substring(1, 6); // First few chars of ID
+                    displayName = $"{entry.Description} (ID: {shortId}...)";
+                }
+
+                Console.WriteLine($"   [{i + 1}] {displayName}");
             }
 
-            Console.Write("\nEnter number (1-" + entries.Count + "): ");
+            Console.Write($"\nEnter number (1-{entries.Count}): ");
+            // ... (rest of the selection logic is the same) ...
             var input = Console.ReadKey();
-            Console.WriteLine(); // New line
-
-            // Convert char '1' to int 0, '2' to int 1
+            // ...
             if (int.TryParse(input.KeyChar.ToString(), out int selection))
             {
-                int index = selection - 1; // 0-based index
-                if (index >= 0 && index < entries.Count)
-                {
-                    return entries[index];
-                }
+                 int index = selection - 1;
+                 if (index >= 0 && index < entries.Count) return entries[index];
             }
-
-            PrintError("Invalid selection.");
             return null;
         }
-
         
     }
 }

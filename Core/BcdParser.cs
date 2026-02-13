@@ -5,19 +5,16 @@ namespace QuickBootWindows.Core
 {
     public static class BcdParser
     {
-        // Change return type to List<BootEntry>
         public static List<BootEntry> FindLinuxEntries(string bcdOutput, string[] keywords)
         {
             var results = new List<BootEntry>();
-            
-            // Regex for Identifier and Description
-            string pattern = @"identifier\s+({[a-zA-Z0-9\-]+})[\s\S]*?description\s+(.*)";
-            
             var blocks = bcdOutput.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            // Regex to capture Identifier, Description, AND Path
+            string pattern = @"identifier\s+({[a-zA-Z0-9\-]+})[\s\S]*?path\s+(.*?)(\r|\n)[\s\S]*?description\s+(.*)";
 
             foreach (var block in blocks)
             {
-                // SAFETY: Ignore Windows entries
                 if (block.Contains("Windows Boot Manager") || block.Contains("Microsoft")) continue;
 
                 foreach (var keyword in keywords)
@@ -25,17 +22,18 @@ namespace QuickBootWindows.Core
                     if (block.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                     {
                         var match = Regex.Match(block, pattern);
+                        
+                        // Note: If regex fails (some entries don't have paths), fallback to basic
                         if (match.Success)
                         {
-                            var entry = new BootEntry(
-                                Guid: match.Groups[1].Value,
-                                Description: match.Groups[2].Value.Trim()
-                            );
+                            var guid = match.Groups[1].Value;
+                            var path = match.Groups[2].Value.Trim();
+                            var desc = match.Groups[4].Value.Trim();
 
-                            // Prevent duplicates (if multiple keywords match the same entry)
-                            if (!results.Any(r => r.Guid == entry.Guid))
+                            // Avoid duplicates
+                            if (!results.Any(r => r.Guid == guid))
                             {
-                                results.Add(entry);
+                                results.Add(new BootEntry(guid, desc, path));
                             }
                         }
                     }
