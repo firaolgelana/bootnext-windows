@@ -5,17 +5,21 @@ namespace QuickBootWindows.Core
 {
     public static class BcdParser
     {
-        public static BootEntry? FindLinuxEntry(string bcdOutput, string[] keywords)
+        // Change return type to List<BootEntry>
+        public static List<BootEntry> FindLinuxEntries(string bcdOutput, string[] keywords)
         {
-            // Regex to capture Identifier and Description
-            // Looks for: identifier {GUID} ... description Something
+            var results = new List<BootEntry>();
+            
+            // Regex for Identifier and Description
             string pattern = @"identifier\s+({[a-zA-Z0-9\-]+})[\s\S]*?description\s+(.*)";
             
-            // Split by double newline to get blocks
-            var entries = bcdOutput.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
+            var blocks = bcdOutput.Split(new[] { "\r\n\r\n", "\n\n" }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var block in entries)
+            foreach (var block in blocks)
             {
+                // SAFETY: Ignore Windows entries
+                if (block.Contains("Windows Boot Manager") || block.Contains("Microsoft")) continue;
+
                 foreach (var keyword in keywords)
                 {
                     if (block.Contains(keyword, StringComparison.OrdinalIgnoreCase))
@@ -23,15 +27,21 @@ namespace QuickBootWindows.Core
                         var match = Regex.Match(block, pattern);
                         if (match.Success)
                         {
-                            return new BootEntry(
+                            var entry = new BootEntry(
                                 Guid: match.Groups[1].Value,
                                 Description: match.Groups[2].Value.Trim()
                             );
+
+                            // Prevent duplicates (if multiple keywords match the same entry)
+                            if (!results.Any(r => r.Guid == entry.Guid))
+                            {
+                                results.Add(entry);
+                            }
                         }
                     }
                 }
             }
-            return null;
+            return results;
         }
     }
 }
